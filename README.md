@@ -23,7 +23,7 @@ Il inclut des outils pour :
 ## 🧩 Principales fonctionnalités
 
 | Fonction                     | Description                                           |
-|---------------------|---------------------------------------------------|
+|------------------------------|-------------------------------------------------------|
 | `st_utm()`                   | Reprojetter dans la zone UTM adéquate                 |
 | `aligner_rasters()`          | Aligner, lisser et normaliser une liste de rasters    |
 | `lidar()`                    | Télécharger et recadrer les données LiDAR             |
