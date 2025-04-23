@@ -1,0 +1,29 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/Grille.html</loc></url>
+<url><loc>/articles/humidite.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/LiDAR.html</loc></url>
+<url><loc>/articles/Sentinel2.html</loc></url>
+<url><loc>/articles/zones de gestion.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/aligner_rasters.html</loc></url>
+<url><loc>/reference/creer_rectangles.html</loc></url>
+<url><loc>/reference/geom_topo.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/indice_humidite.html</loc></url>
+<url><loc>/reference/lidar.html</loc></url>
+<url><loc>/reference/multiplane_sf.html</loc></url>
+<url><loc>/reference/preparation_zones.html</loc></url>
+<url><loc>/reference/raccourcir_lignes.html</loc></url>
+<url><loc>/reference/rectangle_oriente_min.html</loc></url>
+<url><loc>/reference/reseau_lignes_paralleles.html</loc></url>
+<url><loc>/reference/sentinel2.html</loc></url>
+<url><loc>/reference/sf_multiplane.html</loc></url>
+<url><loc>/reference/st_grille.html</loc></url>
+<url><loc>/reference/st_utm.html</loc></url>
+<url><loc>/reference/topo_lidar.html</loc></url>
+<url><loc>/reference/zones.html</loc></url>
+</urlset>
+

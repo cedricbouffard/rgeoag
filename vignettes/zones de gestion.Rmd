@@ -1,0 +1,94 @@
+---
+title: "Création de zones de gestion"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Exemple : Création de zones de gestion}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(rgeoag)
+library(sf)
+library(ggplot2)
+library(terra)
+```
+
+## 🌾 Pourquoi créer des zones de gestion?
+
+La création de zones de gestion permet d’adapter les pratiques agricoles (fertilisation, semis, irrigation, etc.) aux caractéristiques spatiales d’un champ. Cela favorise une meilleure utilisation des intrants, une augmentation des rendements et une réduction des impacts environnementaux.
+
+### 🔁 Continuité spatiale
+
+Dans notre approche, **nous favorisons la création de zones spatialement contiguës**. Cela facilite la mise en œuvre pratique sur le terrain (ex. : prescriptions machines), réduit les transitions abruptes et reflète mieux la structure naturelle du sol et des cultures.
+
+---
+
+## 📥 Chargement des données d'exemple
+
+```{r}
+# Charger un exemple de champ inclus dans le package
+champ <- champs_exemple |> 
+  dplyr::slice(1) |>
+  sf::st_sf() |> 
+  st_utm() 
+plot(st_geometry(champ))
+```
+
+---
+
+## 📡 Récupération des données LiDAR
+
+```{r}
+# Télécharger automatiquement le LiDAR le plus récent
+r_lidar <- lidar(champ, recent = TRUE)[[1]]
+```
+
+---
+
+## 🛰️ NDVI Sentinel-2 pour l'été 2024
+
+```{r}
+# Extraction du NDVI (juin à août 2024)
+ndvi <- sentinel2(champ, annee_debut = 2024, annee_fin = 2024, mois = 6:8, indice = "NDVI", max_nuage = 50)
+```
+
+---
+
+## 🧪 Création des zones de gestion
+
+```{r}
+# Sélectionner les couches utiles
+raster_liste <- list(ndvi, r_lidar)
+
+# Préparation des superpixels
+zones_prepa <- preparation_zones(raster_liste, k_supercell = 300)
+s_poly <- zones_prepa$s_polygone
+poids <- zones_prepa$poids
+df <- zones_prepa$donnees
+```
+
+---
+
+## 🧩 Regroupement avec SKATER
+
+```{r}
+zones_sf <- zones(s_poly, w = poids, df = df, n_zones = 4, superficie_min = 10000)
+```
+
+---
+
+## 🖼️ Visualisation
+
+```{r}
+ggplot(zones_sf) +
+  geom_sf(aes(fill = factor(cl)), color = "white") +
+  scale_fill_brewer(palette = "Set3") +
+  theme_minimal() +
+  labs(title = "Zones de gestion spatiales", fill = "Zone")
+```
+
+---
+
+Ce processus peut être automatisé pour plusieurs champs, intégré à une interface Shiny ou combiné avec des recommandations d’intrants.

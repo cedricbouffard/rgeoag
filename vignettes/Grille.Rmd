@@ -1,0 +1,88 @@
+---
+title: "Grilles orientées en agriculture de précision"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Grilles orientées en agriculture de précision}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(rgeoag)
+library(sf)
+library(ggplot2)
+sf::sf_use_s2(F)
+```
+
+## 🎯 Objectif
+
+Les grilles orientées sont un outil essentiel pour organiser l’espace agricole en unités d’échantillonnage, de traitement ou d’observation. Elles facilitent la planification des opérations sur le terrain en suivant l’orientation dominante des champs.
+
+
+---
+
+## 🗂️ Exemple 1 : Grille de base avec orientation automatique
+
+Ce premier exemple génère une grille avec largeur et longueur spécifiées. L’orientation est déduite automatiquement selon l’axe dominant du champ.
+
+```{r}
+champ <- champs_exemple |> dplyr::slice(1) |> sf::st_sf() |> st_utm()
+grille1 <- st_grille(champ, largeur = 100, longueur = 300)
+plot(grille1)
+```
+
+> 📌 *Utilisation typique : structuration régulière pour un plan d’échantillonnage ou une prescription uniforme.*
+
+---
+
+## 🔄 Exemple 2 : Grille avec angle spécifié manuellement
+
+On peut forcer un angle d’orientation personnalisé, par exemple pour s’aligner sur une route ou une structure de drainage existante.
+
+```{r}
+grille2 <- st_grille(champ, largeur = 100, longueur = 300, angle = 45)
+plot(grille2)
+```
+
+> 📐 *Permet d’ajuster l’alignement à une infrastructure réelle, même si elle ne correspond pas à l’orientation naturelle du champ.*
+
+---
+
+## 📍 Exemple 3 : Grille numérotée depuis un coin spécifique
+
+On peut choisir le coin d’origine de la numérotation (`SO`, `NO`, `SE`, `NE`). Ici, l’origine est en coin nord-ouest.
+
+```{r}
+grille3 <- st_grille(champ, largeur = 100, longueur = 300, coin = "NO")
+plot(grille3)
+```
+
+> 🧭 *Utile pour aligner la grille à la logique opérationnelle du producteur (ex. : toujours commencer au coin nord-ouest).*
+
+---
+
+## ➕ Exemple 4 : Grille en quinconce
+
+Le mode `quinconce = TRUE` décale une ligne sur deux horizontalement, ce qui permet une couverture plus uniforme dans certains cas (ex. : échantillonnage représentatif).
+
+```{r}
+grille4 <- st_grille(champ, largeur = 100, longueur = 300, quinconce = TRUE)
+plot(grille4)
+```
+
+
+---
+
+## 🔘 Exemple 5 : Extraire les centroïdes au lieu des polygones
+
+Si `points = TRUE`, la grille retourne des points (centroïdes) plutôt que des polygones.
+
+```{r}
+grille_pts <- st_grille(champ, largeur = 100, longueur = 300, points = TRUE)
+plot(grille_pts)
+```
+
+> 🎯 *Adapté pour un échantillonnage ponctuel ou la définition de points de contrôle GPS.*
+
+---

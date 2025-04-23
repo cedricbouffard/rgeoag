@@ -1,0 +1,49 @@
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+home:
+  title: "rgeoag - Géomatique Agricole – Québec"
+  description: |
+    Outils géospatiaux pour l'agriculture de précision au Québec : raster, LiDAR, Sentinel-2, grilles, nivellement, zones de gestion, et plus.
+
+navbar:
+  structure:
+    left:
+    - home
+    - reference
+    - articles
+    right:
+    - github
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/cedricbouffard/rgeoag
+
+reference:
+  - title: "Traitement raster et LiDAR"
+    contents:
+      - aligner_rasters
+      - lidar
+      - indice_humidite
+      - topo_lidar
+      - geom_topo
+  - title: "Vecteurs orientés et grilles"
+    contents:
+      - st_utm
+      - creer_rectangles
+      - st_grille
+      - reseau_lignes_paralleles
+      - raccourcir_lignes
+      - rectangle_oriente_min
+  - title: "Export MultiPlane"
+    contents:
+      - sf_multiplane
+      - multiplane_sf
+  - title: "Segmentation spatiale"
+    contents:
+      - preparation_zones
+      - zones
+  - title: "Imagerie satellite"
+    contents:
+      - sentinel2

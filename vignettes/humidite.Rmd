@@ -1,0 +1,69 @@
+---
+title: "Indices d'humidité topographique"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Indices d'humidité topographique}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(rgeoag)
+library(terra)
+library(sf)
+library(ggplot2)
+```
+
+## 💧 Pourquoi modéliser l'humidité du sol ?
+
+La répartition de l’humidité dans un champ a un impact direct sur :
+- la croissance des cultures,
+- la vulnérabilité à la compaction et à l’érosion,
+- la précision des recommandations en irrigation et drainage.
+
+L’indice d’humidité topographique (TWI), l’accumulation, les dépressions et les formes du terrain sont autant d’indicateurs utiles issus du LiDAR.
+
+---
+
+## 🗂️ Chargement de la parcelle d'exemple
+
+```{r}
+champ <- champs_exemple |> dplyr::slice(1) |> sf::st_sf() |> st_utm()
+plot(st_geometry(champ))
+```
+
+---
+
+## 📥 Téléchargement du LiDAR
+
+```{r}
+r_lidar <- lidar(champ, recent = TRUE)[[1]]
+```
+
+---
+
+## 📊 Calcul des indices topographiques
+
+```{r}
+topo <- indice_humidite(r_lidar)
+```
+
+---
+
+## 🖼️ Visualisation
+
+```{r}
+plot(topo)
+```
+
+---
+
+## 🧠 Interprétation
+
+- **TWI** : identifie les zones de convergence de l’eau (risques d’engorgement, drainage faible).
+- **Accumulation** : représente les zones de collecte d’écoulement.
+- **Dépressions** : points bas où l’eau stagne naturellement.
+- **Geomorphons** : classification des formes de terrain (crête, cuvette, etc.).
+
+Ces données peuvent être intégrées dans des modèles prédictifs de rendement ou des outils de zonage de gestion de l’eau.

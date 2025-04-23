@@ -1,0 +1,66 @@
+---
+title: "Extraction d'indices Sentinel-2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extraction d'indices Sentinel-2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(rgeoag)
+library(sf)
+library(ggplot2)
+library(terra)
+```
+
+## 🛰️ Introduction
+
+L’imagerie Sentinel-2 offre une résolution spatiale et temporelle précieuse pour le suivi de la santé des cultures. Cette vignette montre comment extraire automatiquement un **indice de végétation NDVI** pour un champ, à partir de la plateforme Planetary Computer.
+
+Nous illustrons ici une extraction du NDVI pour **l’été 2024 (juin à août)**, avec un seuil de couverture nuageuse.
+
+---
+
+## 📥 Chargement du champ d'exemple
+
+```{r}
+champ <- champs_exemple |> dplyr::slice(1) |> sf::st_sf() |> st_utm()
+plot(st_geometry(champ))
+```
+
+---
+
+## 📡 Récupération du NDVI Sentinel-2 (été 2024)
+
+```{r}
+ndvi <- sentinel2(
+  polygone = champ,
+  annee_debut = 2024,
+  annee_fin = 2024,
+  mois = 6:8,
+  indice = "NDVI",
+  max_nuage = 20
+)
+```
+
+---
+
+## 🖼️ Visualisation du NDVI
+
+```{r}
+plot(ndvi)
+```
+
+---
+
+## 💡 Remarques
+
+- La fonction `sentinel2()` interroge directement les catalogues STAC du **Planetary Computer de Microsoft**.
+- Les images sont filtrées selon la **proportion de nuages** dans la parcelle.
+- L'utilisateur peut aussi choisir d'autres indices (`GNDVI`, `EVI`, `KNDVI`).
+
+---
+
+Cette approche facilite l’analyse temporelle automatisée pour des parcelles multiples dans un contexte de **monitoring de cultures** ou de **diagnostic de stress hydrique ou nutritionnel**.
