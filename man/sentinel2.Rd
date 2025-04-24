@@ -30,13 +30,13 @@ sentinel2(
 
 \item{nuage_dans_la_parcelle}{Proportion maximale de nuages dans la parcelle (0–100), ou `FALSE` pour désactiver}
 
-\item{indice}{Indice de végétation à calculer (`"NDVI"`, `"GNDVI"`, `"EVI"`, `"KNDVI"`)}
+\item{indice}{Indice de végétation à calculer (`"NDVI"`, `"GNDVI"`, `"EVI"`, `"KNDVI"`, , `"NDRE"`)}
 }
 \value{
 Un objet `SpatRaster` contenant l'indice de végétation par date
 }
 \description{
 Cette fonction interroge le Planetary Computer pour obtenir des images Sentinel-2 L2A,
-filtre selon la couverture nuageuse, calcule un indice de végétation (NDVI, GNDVI, EVI, KNDVI)
+filtre selon la couverture nuageuse, calcule un indice de végétation (NDVI, GNDVI, EVI, KNDVI, NDRE)
 et retourne une stack raster avec les valeurs de l'indice sélectionné.
 }

@@ -2,21 +2,23 @@
 % Please edit documentation in R/reseau_ligne_parallele.R
 \name{reseau_lignes_paralleles}
 \alias{reseau_lignes_paralleles}
-\title{Créer un réseau de lignes parallèles orientées}
+\title{Créer un réseau de lignes parallèles orientées avec angle et coin dynamiques}
 \usage{
-reseau_lignes_paralleles(polygone, angle, largeur)
+reseau_lignes_paralleles(polygone, angle = NULL, largeur = 20, coin = "SO")
 }
 \arguments{
-\item{polygone}{Un objet `sf` de type POLYGON, MULTIPOLYGON ou `bbox` représentant la zone à couvrir}
+\item{polygone}{Objet `sf` (POLYGON ou MULTIPOLYGON)}
 
-\item{angle}{Angle d’orientation des lignes en degrés (par rapport à l’axe des x, dans le sens antihoraire)}
+\item{angle}{(optionnel) Angle en degrés. Si NULL, calculé automatiquement.}
 
-\item{largeur}{Espacement entre les lignes (en unités du système de coordonnées)}
+\item{largeur}{Espacement entre les lignes.}
+
+\item{coin}{Coin d’ancrage : `"SO"`, `"SE"`, `"NE"`, `"NO"` (par défaut `"SO"`)}
 }
 \value{
-Un objet `sf` de type LINESTRING contenant le réseau de lignes découpé à l'emprise
+Un objet `sf` de lignes coupées à l'emprise du polygone
 }
 \description{
-Cette fonction génère un réseau de lignes parallèles orientées selon un angle donné,
-espacées d'une largeur fixe, et couvrant une emprise fournie.
+Cette fonction génère un réseau de lignes parallèles orientées selon un angle donné ou calculé automatiquement,
+espacées d'une largeur fixe, et couvrant une emprise fournie. Permet de choisir le coin de départ.
 }
