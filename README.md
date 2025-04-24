@@ -1,3 +1,4 @@
+# rgeoag <img src="man/figures/logo.png" align="right" alt="" width="180" />
 # 📦 Fonctions de géomatique agricole
 
 Ce package R regroupe une collection de fonctions utilitaires pour
@@ -17,7 +18,7 @@ Il inclut des outils pour :
 ## 🧩 Principales fonctionnalités
 
 | Fonction                     | Description                                           |
-|------------------------------|-------------------------------------------------------|
+|--------------------------|----------------------------------------------|
 | `st_utm()`                   | Reprojetter dans la zone UTM adéquate                 |
 | `aligner_rasters()`          | Aligner, lisser et normaliser une liste de rasters    |
 | `lidar()`                    | Télécharger et recadrer les données LiDAR             |
