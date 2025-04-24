@@ -1,9 +1,3 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # 📦 Fonctions de géomatique agricole
 
 Ce package R regroupe une collection de fonctions utilitaires pour
