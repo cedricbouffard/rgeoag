@@ -1,7 +1,7 @@
 #' Télécharger et calculer un indice de végétation Sentinel-2 pour une parcelle
 #'
 #' Cette fonction interroge le Planetary Computer pour obtenir des images Sentinel-2 L2A,
-#' filtre selon la couverture nuageuse, calcule un indice de végétation (NDVI, GNDVI, EVI, KNDVI)
+#' filtre selon la couverture nuageuse, calcule un indice de végétation (NDVI, GNDVI, EVI, KNDVI, NDRE)
 #' et retourne une stack raster avec les valeurs de l'indice sélectionné.
 #'
 #' @param polygone Un objet `sf` ou un chemin vers un fichier vectoriel (shapefile, geojson, etc.)
@@ -11,7 +11,7 @@
 #' @param max_nuage Pourcentage maximal de nuages (0 à 100) selon les métadonnées
 #' @param mois Mois d'intérêt (entiers entre 1 et 12)
 #' @param nuage_dans_la_parcelle Proportion maximale de nuages dans la parcelle (0–100), ou `FALSE` pour désactiver
-#' @param indice Indice de végétation à calculer (`"NDVI"`, `"GNDVI"`, `"EVI"`, `"KNDVI"`)
+#' @param indice Indice de végétation à calculer (`"NDVI"`, `"GNDVI"`, `"EVI"`, `"KNDVI"`, , `"NDRE"`)
 #'
 #' @return Un objet `SpatRaster` contenant l'indice de végétation par date
 #' @export
@@ -28,8 +28,12 @@ sentinel2 <- function(polygone, dossier = NULL, annee_debut = 2018, annee_fin = 
     NDVI = list(bandes = c("B04", "B08"), formule = function(b) (b$B08 - b$B04) / (b$B08 + b$B04)),
     GNDVI = list(bandes = c("B03", "B08"), formule = function(b) (b$B08 - b$B03) / (b$B08 + b$B03)),
     EVI = list(bandes = c("B02", "B04", "B08"), formule = function(b) 2.5 * (b$B08 - b$B04) / (b$B08 + 6 * b$B04 - 7.5 * b$B02 + 1)),
-    KNDVI = list(bandes = c("B04", "B08"), formule = function(b) tanh((b$B08 - b$B04) / (b$B08 + b$B04))^2)
-  )
+    KNDVI = list(bandes = c("B04", "B08"), formule = function(b) tanh((b$B08 - b$B04) / (b$B08 + b$B04))^2),
+    NDRE = list(
+      bandes = c("B05", "B08"),
+      formule = function(b) (b$B08 - b$B05) / (b$B08 + b$B05)
+    )
+    )
 
   indice <- toupper(indice)
   stopifnot(indice %in% names(liste_indices))
@@ -92,6 +96,10 @@ sentinel2 <- function(polygone, dossier = NULL, annee_debut = 2018, annee_fin = 
   }
 
   couches <- lapply(names(urls_band), function(b) terra::rast(urls_band[[b]], vsi = TRUE))
+  if (indice == "NDRE") {
+    couche_ref <- couches[["B08"]]
+    couches[["B05"]] <- terra::resample(couches[["B05"]], couche_ref, method = "bilinear")
+  }
   names(couches) <- names(urls_band)
   vecteur <- sf::st_transform(polygone, terra::crs(couches[[1]])) |> terra::vect()
   couches <- lapply(couches, function(r) terra::crop(r, vecteur, mask = TRUE))
