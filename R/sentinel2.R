@@ -73,38 +73,76 @@ sentinel2 <- function(polygone, dossier = NULL, annee_debut = 2018, annee_fin = 
   verif_mois <- lubridate::month(lubridate::as_datetime(rstac::items_datetime(query))) %in% mois
 
   scl_urls <- rev(scl_urls[verif_mois])
-  urls_band <- lapply(urls_band, function(u) rev(u[verif_mois]))
+  urls_band <- lapply(urls_band, function(u) split(rev(u[verif_mois]), dates))
   dates <- rev(dates[verif_mois])
-  if (length(scl_urls) == 0) return(NULL)
-  indices_valides <- seq_along(scl_urls)
+  # Regrouper les scl_urls par date
+  scl_urls_grouped <- split(scl_urls, dates)
 
+  # Redéfinir les dates (une fois par groupe unique)
+  dates <- names(scl_urls_grouped)
   if (!identical(nuage_dans_la_parcelle, FALSE)) {
-    scl_stack <- terra::rast(scl_urls, vsi = TRUE)
-    proportion_saine <- suppressWarnings(exactextractr::exact_extract(
-      scl_stack, polygone,
-      function(values, cov_frac) mean((values %in% 4:6), na.rm = TRUE),
-      force_df = TRUE, stack_apply = TRUE
-    ))
-    acceptables <- proportion_saine |>
-      dplyr::summarise_all(~ mean(.x >= ((100 - nuage_dans_la_parcelle) / 100), na.rm = TRUE)) |>
-      as.logical()
-    indices_valides <- which(acceptables)
-    scl_urls <- scl_urls[indices_valides]
+    scl_vrts <- lapply(seq_along(scl_urls_grouped), function(i) {
+      fichiers <- scl_urls_grouped[[i]]
+      if (length(fichiers) > 1) {
+        terra::vrt(paste0("/vsicurl/", fichiers))
+      } else {
+        terra::rast(paste0("/vsicurl/", fichiers))
+      }
+    })
+
+    proportion_saine <- lapply(scl_vrts, function(r) {
+      suppressWarnings(exactextractr::exact_extract(
+        r, polygone,
+        function(values, cov_frac) mean((values %in% 4:6), na.rm = TRUE),
+        force_df = TRUE
+      ))
+    })
+
+    acceptables <- sapply(proportion_saine, function(df) {
+      mean(df[[1]] >= ((100 - nuage_dans_la_parcelle) / 100), na.rm = TRUE)
+    })
+
+    indices_valides <- which(acceptables == 1)
+
+    scl_urls_grouped <- scl_urls_grouped[indices_valides]
     urls_band <- lapply(urls_band, function(u) u[indices_valides])
     dates <- dates[indices_valides]
+
     if (length(indices_valides) == 0) return(NULL)
   }
 
-  couches <- lapply(names(urls_band), function(b) terra::rast(urls_band[[b]], vsi = TRUE))
+  groupes_par_date <- lapply(seq_along(dates), function(i) {
+    lapply(names(urls_band), function(b) urls_band[[b]][i]) |> setNames(names(urls_band))
+  })
+
+  # Étape 2 : Pour chaque bande, créer une stack de VRT par date
+  couches <- list()
+
+  for (bande in names(urls_band)) {
+    vrts_bande <- list()
+    for (i in seq_along(groupes_par_date)) {
+      fichiers <- groupes_par_date[[i]][[bande]]
+
+      # Si plusieurs fichiers pour une même date/bande (chevauchement de tuiles)
+      if (length(fichiers[[1]]) > 1) {
+        vrt <- terra::vrt(paste0("/vsicurl/",fichiers[[1]]))
+      } else {
+        vrt <- terra::rast(paste0("/vsicurl/",fichiers[[1]]))
+      }
+      vrts_bande[[i]] <- vrt
+    }
+    couches[[bande]] <- terra::sprc(vrts_bande)
+  }
+
+  names(couches) <- names(urls_band)
+  vecteur <- sf::st_transform(polygone, terra::crs(couches[[1]][1])) |> terra::vect()
+  couches <- lapply(couches, function(r) terra::vrt(terra::crop(r, vecteur), options = "-separate"))
   if (indice == "NDRE") {
     couche_ref <- couches[["B08"]]
     couches[["B05"]] <- terra::resample(couches[["B05"]], couche_ref, method = "bilinear")
   }
-  names(couches) <- names(urls_band)
-  vecteur <- sf::st_transform(polygone, terra::crs(couches[[1]])) |> terra::vect()
-  couches <- lapply(couches, function(r) terra::crop(r, vecteur, mask = TRUE))
-
   vi <- do.call(formule_indice, list(couches))
+  vi = terra::crop(vi , vecteur, mask=T)
   names(vi) <- dates
   terra::varnames(vi) <- indice
 
