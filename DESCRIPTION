@@ -1,13 +1,45 @@
-Package: rgeoag
 Type: Package
+Package: rgeoag
 Title: Outils pour l’Agriculture de Précision au Québec
 Version: 0.1.0
 Author: Cédric Bouffard <info@cedricbouffard.com>
 Maintainer: Cédric Bouffard <info@cedricbouffard.com>
-Description: Ce package regroupe un ensemble de fonctions conçues pour répondre aux besoins spécifiques de l’agriculture de précision dans le contexte québécois.
+Description: Ce package regroupe un ensemble de fonctions conçues pour
+    répondre aux besoins spécifiques de l’agriculture de précision dans le
+    contexte québécois.
 License: GPL
+Depends: 
+    R (>= 2.10)
+Imports: 
+    dplyr,
+    exactextractr,
+    geosphere,
+    ggnewscale,
+    ggplot2,
+    glue,
+    lubridate,
+    modelbased,
+    purrr,
+    readr,
+    rgeoda,
+    rlang,
+    rstac,
+    scales,
+    sf,
+    stats,
+    stringr,
+    supercells,
+    terra,
+    tibble,
+    tidyr,
+    tidyterra,
+    tools,
+    utils,
+    whitebox
+Suggests: 
+    ggspatial,
+    knitr,
+    rmarkdown
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
-Depends: 
-    R (>= 2.10)
