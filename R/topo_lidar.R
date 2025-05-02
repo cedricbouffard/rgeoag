@@ -62,7 +62,7 @@ topo_lidar <- function(polygone, fichier_sortie,
   sf::st_geometry(bordure) <- "geometry"
 
   grille_pts <- polygone |>
-    st_grille(largeur = largeur, longueur = longueur, pts = TRUE) |>
+    st_grille(largeur = largeur, longueur = longueur, points = TRUE) |>
     dplyr::select(geometry) |>
     dplyr::mutate(Code = ifelse(multiplane, "", "3GRD"))
 
