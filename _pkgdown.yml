@@ -36,10 +36,12 @@ reference:
       - reseau_lignes_paralleles
       - raccourcir_lignes
       - rectangle_oriente_min
-  - title: "Export MultiPlane"
+  - title: "Nivellement"
     contents:
       - sf_multiplane
       - multiplane_sf
+      - svy_sf
+      - sf_ags
   - title: "Segmentation spatiale"
     contents:
       - preparation_zones
