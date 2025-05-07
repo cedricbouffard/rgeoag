@@ -73,7 +73,7 @@ sentinel2 <- function(polygone, dossier = NULL, annee_debut = 2018, annee_fin = 
   verif_mois <- lubridate::month(lubridate::as_datetime(rstac::items_datetime(query))) %in% mois
 
   scl_urls <- rev(scl_urls[verif_mois])
-  urls_band <- lapply(urls_band, function(u) split(rev(u[verif_mois]), dates))
+  urls_band <- lapply(urls_band, function(u) split(rev(u[verif_mois]), dates[verif_mois]))
   dates <- rev(dates[verif_mois])
   # Regrouper les scl_urls par date
   scl_urls_grouped <- split(scl_urls, dates)
