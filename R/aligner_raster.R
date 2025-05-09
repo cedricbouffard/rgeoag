@@ -34,6 +34,7 @@ aligner_rasters <- function(raster_liste, noms = NULL, fenetre_focale = 1, norma
   })
 
   raster_combine <- do.call(c, raster_aligne)
+  raster_combine=terra::rast(raster_combine)                                 
   if (!is.null(noms)) names(raster_combine) <- tools::file_path_sans_ext(noms)
 
   index_couche <- rep(seq_along(nb_couches_par_objet), times = nb_couches_par_objet)
